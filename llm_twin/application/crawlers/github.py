@@ -5,8 +5,9 @@ import tempfile
 
 from aws_lambda_powertools import Logger
 
-from data_crawling.crawlers.base import BaseCrawler
-from data_crawling.db.documents import RepositoryDocument
+from llm_twin.domain.documents import RepositoryDocument
+
+from .base import BaseCrawler
 
 logger = Logger(service="nnaemeka/crawler")
 
@@ -19,6 +20,12 @@ class GithubCrawler(BaseCrawler):
         self._ignore = ignore
 
     def extract(self, link: str, **kwargs) -> None:
+        old_model = self.model.find(link=link)
+        if old_model is not None:
+            logger.info(f"Repository already exists in the database: {link}")
+
+            return
+
         logger.info(f"Starting scrapping Github repository: {link}")
 
         repo_name = link.rstrip("/").split("/")[-1]
@@ -44,8 +51,13 @@ class GithubCrawler(BaseCrawler):
                     file_path = os.path.join(dir, file)
                     with open(os.path.join(root, file), "r", errors="ignore") as f:
                         tree[file_path] = f.read().replace(" ", "")
+            user = kwargs["user"]
             instance = self.model(
-                name=repo_name, link=link, content=tree, owner_id=kwargs.get("user")
+                name=repo_name,
+                link=link,
+                content=tree,
+                author_id=user.id,
+                author_full_name=user.full_name,
             )
 
             instance.save()
