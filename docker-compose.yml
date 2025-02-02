@@ -100,4 +100,4 @@ volumes:
   mongo-replica-1-data:
   mongo-replica-2-data:
   mongo-replica-3-data:
-  # qdrant-data:
+  qdrant-data:
