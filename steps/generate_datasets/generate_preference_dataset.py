@@ -4,50 +4,52 @@ from typing_extensions import Annotated
 from zenml import ArtifactConfig, get_step_context, step
 
 from llm_twin.application.dataset import generation
-from llm_twin.domain.dataset import DatasetType, InstructTrainTestSplit
+from llm_twin.domain.dataset import DatasetType, PreferenceTrainTestSplit
 from llm_twin.domain.prompt import GenerateDatasetSamplesPrompt
 from llm_twin.domain.types import DataCategory
 
 
 @step
-def generate_instruction_dataset(
+def generate_preference_dataset(
     prompts: Annotated[
         dict[DataCategory, list[GenerateDatasetSamplesPrompt]], "prompts"
     ],
     test_split_size: Annotated[float, "test_split_size"],
     mock: Annotated[bool, "mock_generation"] = False,
 ) -> Annotated[
-    InstructTrainTestSplit,
+    PreferenceTrainTestSplit,
     ArtifactConfig(
-        name="instruct_datasets",
-        tags=["dataset", "instruct", "cleaned"],
+        name="preference_datasets",
+        tags=["dataset", "preference", "cleaned"],
     ),
 ]:
-    dataset_generator = generation.get_dataset_generator(DatasetType.INSTRUCTION)
+    dataset_generator = generation.get_dataset_generator(DatasetType.PREFERENCE)
     datasets = dataset_generator.generate(prompts, test_size=test_split_size, mock=mock)
 
     step_context = get_step_context()
     step_context.add_output_metadata(
-        output_name="instruct_datasets",
-        metadata=_get_metadata_instruct_dataset(datasets),
+        output_name="preference_datasets",
+        metadata=_get_metadata_preference_dataset(datasets),
     )
 
     return datasets
 
 
-def _get_metadata_instruct_dataset(datasets: InstructTrainTestSplit) -> dict[str, Any]:
-    instruct_dataset_categories = list(datasets.train.keys())
+def _get_metadata_preference_dataset(
+    datasets: PreferenceTrainTestSplit,
+) -> dict[str, Any]:
+    preference_dataset_categories = list(datasets.train.keys())
     train_num_samples = {
-        category: instruct_dataset.num_samples
-        for category, instruct_dataset in datasets.train.items()
+        category: preference_dataset.num_samples
+        for category, preference_dataset in datasets.train.items()
     }
     test_num_samples = {
-        category: instruct_dataset.num_samples
-        for category, instruct_dataset in datasets.test.items()
+        category: preference_dataset.num_samples
+        for category, preference_dataset in datasets.test.items()
     }
 
     return {
-        "data_categories": instruct_dataset_categories,
+        "data_categories": preference_dataset_categories,
         "test_split_size": datasets.test_split_size,
         "train_num_samples_per_category": train_num_samples,
         "test_num_samples_per_category": test_num_samples,

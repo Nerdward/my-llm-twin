@@ -31,6 +31,9 @@ langchain-community = "^0.3.8"
 chromedriver-autoinstaller = "^0.6.4"
 html2text = "^2024.2.26"
 datasets = "^3.2.0"
+tiktoken = "^0.8.0"
+langchain-openai = "^0.3.3"
+pre-commit = "^4.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
