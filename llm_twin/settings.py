@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     # MongoDB database
     DATABASE_HOST: str = "mongodb://llm_engineering:llm_engineering@127.0.0.1:27017"
     DATABASE_NAME: str = "twin"
+    MONGO_INITDB_ROOT_USERNAME: str | None = None
+    MONGO_INITDB_ROOT_PASSWORD: str | None = None
 
     # Qdrant vector database
     USE_QDRANT_CLOUD: bool = False
@@ -35,10 +37,10 @@ class Settings(BaseSettings):
     QDRANT_APIKEY: str | None = None
 
     # AWS Authentication
-    # AWS_REGION: str = "eu-central-1"
-    # AWS_ACCESS_KEY: str | None = None
-    # AWS_SECRET_KEY: str | None = None
-    # AWS_ARN_ROLE: str | None = None
+    AWS_REGION: str = "us-east-1"
+    AWS_ACCESS_KEY: str | None = None
+    AWS_SECRET_KEY: str | None = None
+    AWS_ARN_ROLE: str | None = None
 
     # --- Optional settings used to tweak the code. ---
 

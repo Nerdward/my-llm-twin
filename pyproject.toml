@@ -39,6 +39,11 @@ pre-commit = "^4.1.0"
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.1"
 
+
+[tool.poetry.group.aws.dependencies]
+boto3 = "^1.36.21"
+sagemaker = "^2.239.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -100,11 +105,11 @@ export-settings-to-zenml = "poetry run python -m tools.run --export-settings"
 delete-settings-zenml = "poetry run zenml secret delete settings"
 
 ## SageMaker
-create-sagemaker-role = "poetry run python -m llm_engineering.infrastructure.aws.roles.create_sagemaker_role"
-create-sagemaker-execution-role = "poetry run python -m llm_engineering.infrastructure.aws.roles.create_execution_role"
-deploy-inference-endpoint = "poetry run python -m llm_engineering.infrastructure.aws.deploy.huggingface.run"
-test-sagemaker-endpoint = "poetry run python -m llm_engineering.model.inference.test"
-delete-inference-endpoint = "poetry run python -m llm_engineering.infrastructure.aws.deploy.delete_sagemaker_endpoint"
+create-sagemaker-role = "poetry run python -m llm_twin.infrastructure.aws.roles.create_sagemaker_role"
+create-sagemaker-execution-role = "poetry run python -m llm_twin.infrastructure.aws.roles.create_execution_role"
+deploy-inference-endpoint = "poetry run python -m llm_twin.infrastructure.aws.deploy.huggingface.run"
+test-sagemaker-endpoint = "poetry run python -m llm_twin.model.inference.test"
+delete-inference-endpoint = "poetry run python -m llm_twin.infrastructure.aws.deploy.delete_sagemaker_endpoint"
 
 ## Docker
 build-docker-image = "docker buildx build --platform linux/amd64 -t llmtwin -f Dockerfile ."
@@ -115,7 +120,7 @@ bash-docker-container = "docker run --rm -it --network host --env-file .env llmt
 lint-check = "poetry run ruff check ."
 format-check = "poetry run ruff format --check ."
 lint-check-docker = "sh -c 'docker run --rm -i hadolint/hadolint < Dockerfile'"
-gitleaks-check = "docker run -v .:/src zricethezav/gitleaks:latest dir /src/llm_engineering"
+gitleaks-check = "docker run -v .:/src zricethezav/gitleaks:latest dir /src/llm_twin"
 lint-fix = "poetry run ruff check --fix ."
 format-fix = "poetry run ruff format ."
 
