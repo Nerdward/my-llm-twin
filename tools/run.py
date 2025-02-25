@@ -5,7 +5,13 @@ from loguru import logger
 import click
 
 from llm_twin import settings
-from pipelines import digital_data_etl, feature_engineering, generate_datasets, training
+from pipelines import (
+    digital_data_etl,
+    feature_engineering,
+    generate_datasets,
+    training,
+    evaluating,
+)
 
 
 @click.command(
@@ -83,6 +89,12 @@ python run.py --only-etl
     is_flag=True,
     default=False,
     help="Whether to run the training pipeline.",
+)
+@click.option(
+    "--run-evaluation",
+    is_flag=True,
+    default=False,
+    help="Whether to run the evaluation pipeline.",
 )
 def main(
     no_cache: bool = False,
@@ -176,6 +188,13 @@ def main(
             f"training_run_{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}"
         )
         training.with_options(**pipeline_args)(**run_args_cd)
+    if run_evaluation:
+        run_args_cd = {}
+        pipeline_args["config_path"] = root_dir / "configs" / "evaluating.yaml"
+        pipeline_args["run_name"] = (
+            f"evaluation_run_{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}"
+        )
+        evaluating.with_options(**pipeline_args)(**run_args_cd)
 
 
 if __name__ == "__main__":
